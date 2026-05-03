@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 60% 98%;
+    --foreground: 220 40% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 40% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 40% 18%;
+    --primary: 213 72% 28%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 60% 92%;
+    --secondary-foreground: 213 72% 28%;
+    --muted: 210 50% 96%;
+    --muted-foreground: 215 20% 52%;
+    --accent: 152 60% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 40% 88%;
+    --input: 210 40% 88%;
+    --ring: 213 72% 55%;
+    --chart-1: 152 60% 38%;
+    --chart-2: 199 89% 48%;
+    --chart-3: 213 72% 28%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 1rem;
+    --sidebar-background: 210 60% 98%;
+    --sidebar-foreground: 220 40% 18%;
+    --sidebar-primary: 152 60% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 200 60% 92%;
+    --sidebar-accent-foreground: 213 72% 28%;
+    --sidebar-border: 210 40% 88%;
+    --sidebar-ring: 213 72% 55%;
+
+    --font-heading: 'Nunito', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .dark {
+    --background: 213 40% 10%;
+    --foreground: 210 60% 96%;
+    --card: 213 40% 14%;
+    --card-foreground: 210 60% 96%;
+    --popover: 213 40% 14%;
+    --popover-foreground: 210 60% 96%;
+    --primary: 213 72% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 213 30% 22%;
+    --secondary-foreground: 210 60% 96%;
+    --muted: 213 30% 18%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 152 60% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 213 30% 22%;
+    --input: 213 30% 22%;
+    --ring: 213 72% 55%;
+    --chart-1: 152 60% 45%;
+    --chart-2: 199 89% 55%;
+    --chart-3: 213 72% 65%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar-background: 213 40% 10%;
+    --sidebar-foreground: 210 60% 96%;
+    --sidebar-primary: 152 60% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 213 30% 18%;
+    --sidebar-accent-foreground: 210 60% 96%;
+    --sidebar-border: 213 30% 22%;
+    --sidebar-ring: 213 72% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+/* Safety line animation */
+@keyframes draw-line {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.safety-line {
+  animation: draw-line 2s ease-out forwards;
+}
