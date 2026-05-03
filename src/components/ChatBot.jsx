@@ -77,25 +77,23 @@ const EMERGENCY_CONTACTS = [
   { name: 'PICACC', number: 'https://picacc.gov.ph', type: 'web' },
   { name: 'DSWD Hotline', number: '931-8101', type: 'call' },
 ];
-
 async function callAI(systemPrompt, history) {
   const messages = history.filter(m => m.content !== 'emergency_panel').map(m => ({
     role: m.role,
     content: m.content
   }));
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: systemPrompt,
       messages,
+      systemPrompt,
     }),
   });
+
   const data = await response.json();
-  return data.content?.[0]?.text || 'Sorry, I could not process that. Please try again.';
+  return data.reply || 'Sorry, I could not process that. Please try again.';
 }
 
 export default function ChatBot() {
