@@ -1,56 +1,129 @@
-// FILE: api/chat.js — Vercel Serverless Function (Groq AI)
-// Deploy to Vercel. Add these env vars in Vercel Dashboard → Settings → Env Variables:
-//   GROQ_API_KEY   → from console.groq.com
-//   VITE_API_URL   → https://your-project.vercel.app  (your deployed URL)
+// FILE: api/chat.js — place at PROJECT ROOT /api/chat.js
+// Vercel serverless function: Groq AI + Supabase logging
+//
+// Env vars to add in Vercel Dashboard → Settings → Env Variables:
+//   GROQ_API_KEY
+//   SUPABASE_URL
+//   SUPABASE_SERVICE_ROLE_KEY
 
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODEL   = "llama-3.3-70b-versatile";
+import { createClient } from '@supabase/supabase-js';
+
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL   = 'llama-3.3-70b-versatile';
+
+function buildSystemPrompt(lang, mode) {
+  const langInstr = lang === 'fil'
+    ? `
+LANGUAGE RULES (SUNDIN ITO PALAGI):
+- Sumagot sa natural na Filipino na ginagamit ng mga totoong Pilipino sa araw-araw.
+- Huwag mag-translate ng salita sa salita mula sa Ingles — magsulat nang natural, parang nakikipag-usap ka sa isang kaibigan o kamag-anak.
+- Huwag gumamit ng malalim o pormal na Filipino na hindi ginagamit sa totoong buhay.
+- Panatilihin ang mga karaniwang tech na salita sa Ingles: "online", "chat", "account", "password", "settings", "screenshot", "block", "report". Huwag puwersahang i-translate ito.
+- Gumamit ng "po/opo" kapag kausap ang magulang o guro. Sa bata, gamitin ang mas relaxed na tono.
+- MALI: "Kontrola ang inyong mga karapatan sa pagbabahagi ng impormasyon sa digital na espasyo."
+- TAMA: "I-check ang iyong privacy settings para hindi makita ng lahat ang iyong profile."
+`
+    : `Respond in clear, simple English. Use everyday words — avoid legal or academic language.`;
+
+  const toneInstr = `
+TONE & LENGTH RULES:
+- Keep replies SHORT. 3 to 5 sentences for simple questions. Never write a long essay unless the user specifically asks for more detail.
+- Use numbered steps ONLY when giving actual step-by-step instructions. Otherwise write in normal sentences.
+- Do not bullet-point everything — it feels robotic and cold.
+- Be warm and friendly, not stiff or formal.
+- End with one short follow-up offer if helpful, but keep it brief.
+`;
+
+  const modeCtx = {
+    child:     'You are speaking to a CHILD or TEEN. Use simple, kind words. Never shame them. Reassure them that they are safe and can always ask a trusted adult for help.',
+    parent:    'You are speaking to a PARENT or GUARDIAN. Give practical advice they can act on right away. Mention Philippine resources when relevant: MAKABATA 1383, PNP-ACG #777, RA 9775, RA 10175.',
+    teacher:   'You are speaking to a TEACHER or EDUCATOR. Provide DepEd K-12 aligned lesson ideas, classroom activities, and age-appropriate internet safety guides.',
+    emergency: 'EMERGENCY MODE. Stay calm and direct. ALWAYS include these hotlines early in your reply: PNP-ACG #777 | MAKABATA 1383 | DSWD 931-8101 | NBI Cybercrime (02)523-8231. User safety comes first.',
+  };
+
+  return `You are SafeNet PH Bot, the child online safety assistant of SafeNet PH — an academic IT case study by North Eastern Mindanao State University (NEMSU).
+
+${modeCtx[mode] ?? modeCtx['child']}
+${langInstr}
+${toneInstr}
+
+You can help with: online grooming, cyberbullying, phishing, sextortion, app safety (TikTok, Facebook, Roblox, Discord), privacy settings, Philippine laws (RA 11930, RA 10173, RA 9775, RA 10175), and emergency escalation.
+
+Rules:
+- Never blame the victim
+- Cite specific Philippine laws only when directly relevant
+- If someone is in immediate danger, lead with hotline numbers first
+- Only answer online safety topics — redirect anything unrelated`.trim();
+}
 
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST')   return res.status(405).json({ error: 'Method not allowed' });
 
-  const { messages, systemPrompt } = req.body;
+  const { messages, mode, lang, sessionId } = req.body ?? {};
 
-  if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: 'messages array is required' });
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'messages[] is required' });
   }
+
+  const userMessage = messages[messages.length - 1]?.content ?? '';
 
   try {
     const groqRes = await fetch(GROQ_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: GROQ_MODEL,
+        model:       GROQ_MODEL,
+        max_tokens:  400,
+        temperature: 0.6,
         messages: [
-          { role: 'system', content: systemPrompt || 'You are SafeNet PH Bot, a helpful online safety assistant for Filipino children, parents, and teachers.' },
-          ...messages
+          { role: 'system', content: buildSystemPrompt(lang ?? 'en', mode ?? 'child') },
+          ...messages,
         ],
-        temperature: 0.7,
-        max_tokens: 1024,
       }),
     });
 
     if (!groqRes.ok) {
-      const err = await groqRes.text();
-      console.error('Groq error:', err);
-      return res.status(500).json({ error: 'AI service error', details: err });
+      const groqErr = await groqRes.json();
+      throw new Error(groqErr?.error?.message ?? 'Groq API error');
     }
 
-    const data = await groqRes.json();
-    const reply = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response.';
+    const groqData   = await groqRes.json();
+    const reply      = groqData.choices?.[0]?.message?.content ?? 'Sorry, I could not get a response.';
+    const tokensUsed = groqData.usage?.total_tokens ?? 0;
+
+    // Log to Supabase BEFORE sending response (avoids Vercel killing it early)
+    if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const supabase = createClient(
+          process.env.SUPABASE_URL,
+          process.env.SUPABASE_SERVICE_ROLE_KEY
+        );
+        await supabase.from('chat_logs').insert({
+          session_id:   sessionId ?? 'anonymous',
+          mode:         mode      ?? 'child',
+          lang:         lang      ?? 'en',
+          user_message: userMessage,
+          bot_reply:    reply,
+          tokens_used:  tokensUsed,
+          model:        GROQ_MODEL,
+          created_at:   new Date().toISOString(),
+        });
+      } catch (logErr) {
+        console.warn('[Supabase log error]', logErr.message);
+      }
+    }
+
     return res.status(200).json({ reply });
 
-  } catch (error) {
-    console.error('Handler error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+  } catch (err) {
+    console.error('[SafeNet API error]', err.message);
+    return res.status(500).json({ error: err.message ?? 'Internal server error' });
   }
 }

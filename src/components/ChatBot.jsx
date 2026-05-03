@@ -1,41 +1,53 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Send, Shield, Loader2, ChevronLeft, Phone, Globe, BookOpen, Users, AlertTriangle, Scale, Lock, HelpCircle, Gamepad2, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const buildSystemPrompt = (mode, lang) => `You are SafeNet PH Bot — the AI safety assistant of SafeNet PH, an academic project of North Eastern Mindanao State University.
+// ─── Session ID (unique per browser tab) ─────────────────────────────────────
+const SESSION_ID = (() => {
+  const key = 'safebot_session_id';
+  const existing = sessionStorage.getItem(key);
+  if (existing) return existing;
+  const id = Math.random().toString(36).slice(2);
+  sessionStorage.setItem(key, id);
+  return id;
+})();
 
-CURRENT USER MODE: ${mode || 'unknown'}
-PREFERRED LANGUAGE: ${lang === 'FIL' ? 'Filipino/Tagalog' : 'English'}
+// ─── localStorage helpers for per-mode chat history ──────────────────────────
+const STORAGE_KEY = (mode) => `safebot_history_${mode}`;
 
-LANGUAGE RULES: Match the user's language. Filipino/Tagalog ↔ Filipino reply. Taglish is fine.
+function loadHistory(mode) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY(mode));
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch { return []; }
+}
 
-CORE BEHAVIOR:
-• Keep answers SHORT: 3–6 sentences max
-• Use simple, clear words — no legal jargon
-• Be warm, calm, non-judgmental, and supportive
-• Give PRACTICAL steps
-• Never scare the user
+function saveHistory(mode, messages) {
+  try {
+    localStorage.setItem(STORAGE_KEY(mode), JSON.stringify(messages.slice(-40)));
+  } catch { /* fail silently */ }
+}
 
-MODE-BASED RESPONSES:
-PARENT → protective steps, monitoring advice, parental controls
-CHILD → very simple language, age-appropriate safety tips
-TEACHER → classroom ideas, DepEd-aligned lesson suggestions
-EMERGENCY → immediately show hotlines, then calm steps
-
-LAW EXPLAINER (simple terms only):
-• RA 11930 — Anti-OSAEC Law (2022): Criminalizes online grooming, live-streaming of abuse, sextortion
-• RA 10173 — Data Privacy Act: Protects personal info of Filipinos including children
-• RA 9775 — Anti-Child Pornography Act: Criminalizes production/sharing of child abuse material
-• RA 10175 — Cybercrime Prevention Act: Covers cybersex, online identity theft
-
-EMERGENCY RULE: If user mentions abuse, exploitation, threats, blackmail, sharing of private photos, child in danger:
-FIRST say: "Please seek help immediately:
-• PNP Anti-Cybercrime Group: #777
-• MAKABATA Helpline: 1383
-• PICACC: https://picacc.gov.ph
-• DSWD Hotline: 931-8101"
-
-NEVER: invent statistics, give legal advice, write essays, diagnose.`;
+// ─── Suggestion chips per mode (bilingual) ────────────────────────────────────
+const MODE_SUGGESTIONS = {
+  PARENT: {
+    EN:  ['Signs my child is being groomed online', 'How to set parental controls on Android', 'My child received a suspicious message', 'How to talk to my child about online safety'],
+    FIL: ['Paano malalaman kung ginugrumo ang anak ko?', 'Paano mag-set ng parental controls sa Android?', 'Natanggap ng anak ko ang kahina-hinalang mensahe', 'Paano makikipag-usap sa anak tungkol sa online safety?'],
+  },
+  CHILD: {
+    EN:  ['What is online grooming?', 'Is it safe to share my school name online?', 'Someone is bullying me in a game chat', 'I got a message saying I won a prize'],
+    FIL: ['Ano ang online grooming?', 'Pwede bang ibahagi ang pangalan ng aking paaralan?', 'May nambubully sa akin sa game chat', 'May nag-message na nanalo raw ako ng premyo'],
+  },
+  TEACHER: {
+    EN:  ['How to teach online safety to Grade 5', 'Activities about cyberbullying for class', 'DepEd-aligned lesson plan for internet safety', 'How to explain phishing to children'],
+    FIL: ['Paano ituturo ang online safety sa Grade 5?', 'Mga aktibidad tungkol sa cyberbullying para sa klase', 'Lesson plan tungkol sa internet safety na aligned sa DepEd', 'Paano ipaliwanag ang phishing sa mga bata?'],
+  },
+  EMERGENCY: {
+    EN:  ['Someone is threatening me online right now', 'I shared personal info with a stranger', 'I need help reporting something urgent'],
+    FIL: ['May nagbabanta sa akin online ngayon', 'Nagbigay na ako ng personal na impormasyon sa isang estranyo', 'Kailangan ko ng tulong para mag-report'],
+  },
+};
 
 const MODES = [
   { id: 'PARENT', label: 'Parent', labelFil: 'Magulang', icon: Users, color: 'text-blue-600' },
@@ -46,8 +58,8 @@ const MODES = [
 
 const QUICK_ACTIONS = {
   PARENT: [
-    { label: 'App Safety Checker', prompt: 'Check the safety of TikTok for my child' },
-    { label: 'Privacy Settings', prompt: 'How do I set up privacy settings for my child on Facebook?' },
+    { label: 'App Safety Checker', prompt: 'Which apps are safe for children?' },
+    { label: 'Privacy Settings', prompt: 'How do I set up privacy settings to protect my child?' },
     { label: 'Signs of Grooming', prompt: 'What are the warning signs of online grooming?' },
     { label: 'Report an Incident', prompt: 'How do I report online exploitation of my child?' },
   ],
@@ -64,8 +76,6 @@ const QUICK_ACTIONS = {
     { label: 'Parent Seminar Tips', prompt: 'How can I educate parents about OSAEC in a seminar?' },
   ],
   EMERGENCY: [
-    { label: 'Call PNP-ACG #777', prompt: 'emergency_pnp' },
-    { label: 'MAKABATA 1383', prompt: 'emergency_makabata' },
     { label: 'My child is in danger', prompt: 'My child is being sexually exploited online right now' },
     { label: 'I am being threatened', prompt: 'Someone is threatening to share my private photos online' },
   ],
@@ -77,80 +87,188 @@ const EMERGENCY_CONTACTS = [
   { name: 'PICACC', number: 'https://picacc.gov.ph', type: 'web' },
   { name: 'DSWD Hotline', number: '931-8101', type: 'call' },
 ];
-async function callAI(systemPrompt, history) {
-  const messages = history.filter(m => m.content !== 'emergency_panel').map(m => ({
-    role: m.role,
-    content: m.content
-  }));
 
+// ─── Greetings (bilingual, richer — from old bot) ─────────────────────────────
+const GREETINGS = {
+  PARENT: {
+    EN:  "Hello! I'm <strong>SafeNet PH Bot</strong> in Parent Mode.<br/><br/>I'm here to help you understand online risks, recognize warning signs, and protect your child. What would you like to know?",
+    FIL: "Magandang araw po! Ako si <strong>SafeNet PH Bot</strong>.<br/><br/>Narito ako para tulungan kayong protektahan ang inyong anak online. Ano ang gusto ninyong malaman?",
+  },
+  CHILD: {
+    EN:  "Hello! I'm <strong>SafeNet PH Bot</strong> 👋<br/><br/>I'm here to help you stay safe online. You can ask me anything — I won't judge you!",
+    FIL: "Kamusta! Ako si <strong>SafeNet PH Bot</strong> 👋<br/><br/>Narito ako para tulungan kang manatiling ligtas online. Magtanong ka lang!",
+  },
+  TEACHER: {
+    EN:  "Good day, Teacher! I'm <strong>SafeNet PH Bot</strong> in Teacher Mode.<br/><br/>I can help you plan online safety lessons and classroom discussions. What do you need today?",
+    FIL: "Magandang araw po, Guro! Ako si <strong>SafeNet PH Bot</strong>.<br/><br/>Makakatulong ako sa pagplanong mga aralin tungkol sa online safety. Ano ang kailangan ninyo?",
+  },
+  EMERGENCY: {
+    EN:  "⚠️ <strong>Emergency Mode.</strong><br/><br/>If you are in immediate physical danger, please call <strong>911</strong> first.<br/><br/>For online safety emergencies:<br/>📞 PNP-ACG: <strong>#777</strong><br/>📞 MAKABATA: <strong>1383</strong><br/><br/>Describe your situation below — you are not alone.",
+    FIL: "⚠️ <strong>Emergency Mode.</strong><br/><br/>Kung nasa agarang panganib ka, tumawag sa <strong>911</strong>.<br/><br/>Para sa online safety:<br/>📞 PNP-ACG: <strong>#777</strong><br/>📞 MAKABATA: <strong>1383</strong><br/><br/>Sabihin mo sa akin ang iyong sitwasyon. Nandito lang ako.",
+  },
+};
+
+// ─── API call — sends mode/lang/sessionId to backend ─────────────────────────
+async function callAI(messages, mode, lang, sessionId) {
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      messages,
-      systemPrompt,
+      messages: messages.map(m => ({ role: m.role, content: m.content })),
+      mode: mode.toLowerCase(),
+      lang: lang === 'FIL' ? 'fil' : 'en',
+      sessionId,
     }),
   });
-
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err?.error ?? `Server error ${response.status}`);
+  }
   const data = await response.json();
   return data.reply || 'Sorry, I could not process that. Please try again.';
 }
 
+// ─── Highlight emergency numbers in bot replies ───────────────────────────────
+const EMERGENCY_NUMBER_RE = /(#777|1383|8888|931-8101|\(02\)523-8231|911)/g;
+
+function highlightNumbers(html) {
+  return html.replace(
+    EMERGENCY_NUMBER_RE,
+    `<span style="display:inline-flex;align-items:center;gap:4px;background:#fef2f2;border:1px solid #fca5a5;color:#c0392b;font-weight:700;border-radius:999px;padding:1px 8px;font-size:12px;white-space:nowrap;">📞 $1</span>`
+  );
+}
+
+// ─── Render HTML messages safely ──────────────────────────────────────────────
+function MessageContent({ content }) {
+  // If already HTML (greetings), highlight numbers then render
+  if (/<[a-z][\s\S]*>/i.test(content)) {
+    return <div dangerouslySetInnerHTML={{ __html: highlightNumbers(content) }} />;
+  }
+
+  // Plain text — convert markdown-like bold, newlines, then highlight numbers
+  const html = content
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+?)\*/g, '<em>$1</em>')
+    .split('\n')
+    .map(line => line || '<br/>')
+    .join('<br/>');
+
+  return <div dangerouslySetInnerHTML={{ __html: highlightNumbers(html) }} />;
+}
+
 export default function ChatBot() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [screen, setScreen] = useState('home');
-  const [mode, setMode] = useState(null);
-  const [lang, setLang] = useState('EN');
+  const [isOpen, setIsOpen]     = useState(false);
+  const [screen, setScreen]     = useState('home');
+  const [mode, setMode]         = useState(null);
+  const [lang, setLang]         = useState('EN');
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+  const [input, setInput]       = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [chips, setChips]       = useState([]);
+  const [showChips, setShowChips] = useState(false);
   const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
+  const inputRef       = useRef(null);
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, isLoading]);
   useEffect(() => { if (screen === 'chat') inputRef.current?.focus(); }, [screen]);
 
-  const startChat = (selectedMode) => {
-    setMode(selectedMode);
-    if (selectedMode === 'EMERGENCY') {
-      setMessages([{ role: 'assistant', content: 'emergency_panel', type: 'emergency' }]);
-    } else {
-      const greetings = {
-        PARENT: { EN: "Hello! I'm here to help you protect your child online. Ask me about app safety, privacy settings, warning signs, or how to report incidents.", FIL: "Kamusta! Nandito ako para tulungan kang protektahan ang iyong anak online." },
-        CHILD: { EN: "Hi there! 👋 I'm SafeNet Bot. I'm here to help you stay safe online. You can ask me anything — I won't judge you!", FIL: "Hello! 👋 Ako si SafeNet Bot. Nandito ako para tulungan kang manatiling ligtas online." },
-        TEACHER: { EN: "Hello Teacher! I can help you with lesson ideas about online safety, DepEd-aligned activities, and how to handle student disclosures of online abuse.", FIL: "Hello Guro! Matutulungan kita sa mga lesson ideas tungkol sa online safety." },
-      };
-      setMessages([{ role: 'assistant', content: greetings[selectedMode][lang] }]);
+  // Persist chat history per mode
+  useEffect(() => {
+    if (screen === 'chat' && mode && messages.length > 0) {
+      saveHistory(mode, messages);
     }
-    setScreen('chat');
-  };
+  }, [messages, mode, screen]);
 
-  const sendMessage = async (text) => {
-    if (text === 'emergency_pnp' || text === 'emergency_makabata') {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'emergency_panel', type: 'emergency' }]);
-      return;
-    }
-    const userText = text || input.trim();
-    if (!userText || isLoading) return;
-    setInput('');
-    const newMessages = [...messages.filter(m => m.type !== 'emergency'), { role: 'user', content: userText }];
-    setMessages(newMessages);
+  // ── Send to API ──────────────────────────────────────────────────────────────
+  const sendToApi = useCallback(async (history, activeMode, activeLang) => {
     setIsLoading(true);
     try {
-      const reply = await callAI(buildSystemPrompt(mode, lang), newMessages);
+      const reply = await callAI(history, activeMode, activeLang, SESSION_ID);
       setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
-    } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }]);
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: `<span style="color:#c0392b">⚠️ Could not reach SafeNet Bot. Please try again.<br/><small style="opacity:.7">${err.message}</small></span>`,
+      }]);
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  // ── Start chat / restore history ─────────────────────────────────────────────
+  const startChat = useCallback((selectedMode, autoPrompt) => {
+    const savedHistory = loadHistory(selectedMode);
+    const hasHistory = savedHistory.length > 0 && !autoPrompt;
+
+    setMode(selectedMode);
+    setInput('');
+    setScreen('chat');
+
+    if (hasHistory) {
+      setMessages(savedHistory);
+      setShowChips(false);
+      setChips([]);
+    } else {
+      const greeting = { role: 'assistant', content: GREETINGS[selectedMode][lang] };
+      const suggestions = MODE_SUGGESTIONS[selectedMode]?.[lang] ?? [];
+      setChips(suggestions.slice(0, 2));
+      setShowChips(true);
+
+      if (autoPrompt) {
+        const userMsg = { role: 'user', content: autoPrompt };
+        const history = [greeting, userMsg];
+        setMessages(history);
+        setShowChips(false);
+        sendToApi(history, selectedMode, lang);
+      } else {
+        setMessages([greeting]);
+      }
+    }
+  }, [lang, sendToApi]);
+
+  // ── Go back home ─────────────────────────────────────────────────────────────
+  const goHome = () => {
+    setScreen('home');
+    setMode(null);
+    setMessages([]);
+    setInput('');
+    setChips([]);
+    setShowChips(false);
+    setIsLoading(false);
   };
 
-  const handleKeyDown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } };
+  // ── Toggle language ───────────────────────────────────────────────────────────
+  const toggleLang = () => {
+    const next = lang === 'EN' ? 'FIL' : 'EN';
+    setLang(next);
+    if (screen === 'chat' && mode) {
+      setChips((MODE_SUGGESTIONS[mode]?.[next] ?? []).slice(0, 2));
+      if (messages.length <= 1) {
+        setMessages([{ role: 'assistant', content: GREETINGS[mode][next] }]);
+        setShowChips(true);
+      }
+    }
+  };
 
-  const goHome = () => { setScreen('home'); setMode(null); setMessages([]); setInput(''); };
+  // ── Main send ─────────────────────────────────────────────────────────────────
+  const sendMessage = useCallback(async (text) => {
+    const userText = (text ?? input).trim();
+    if (!userText || isLoading) return;
 
-  const quickActions = mode ? QUICK_ACTIONS[mode] : [];
+    setShowChips(false);
+    setInput('');
+
+    const userMsg = { role: 'user', content: userText };
+    const nextHistory = [...messages, userMsg];
+    setMessages(nextHistory);
+    await sendToApi(nextHistory, mode, lang);
+  }, [input, isLoading, messages, mode, lang, sendToApi]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  };
+
+  const quickActions = mode ? (QUICK_ACTIONS[mode] ?? []) : [];
 
   return (
     <>
@@ -177,6 +295,7 @@ export default function ChatBot() {
             className="fixed bottom-6 right-6 z-50 w-[92vw] max-w-sm flex flex-col rounded-2xl overflow-hidden shadow-2xl shadow-primary/30 border border-border/50 bg-background"
             style={{ height: '620px' }}
           >
+            {/* ── Header ── */}
             <div className="flex items-center justify-between px-4 py-3 bg-primary flex-shrink-0">
               <div className="flex items-center gap-2.5">
                 {screen === 'chat' && (
@@ -189,15 +308,18 @@ export default function ChatBot() {
                 </div>
                 <div>
                   <p className="font-heading text-sm font-bold text-primary-foreground leading-none">SafeNet PH Bot</p>
-                  <p className="font-body text-[10px] text-primary-foreground/50 leading-none mt-0.5">{mode ? `${mode} Mode` : 'Online Safety Assistant'}</p>
+                  <p className="font-body text-[10px] text-primary-foreground/50 leading-none mt-0.5">
+                    {mode ? `${mode} Mode` : 'Online Safety Assistant'}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
-                <button onClick={() => setLang(l => l === 'EN' ? 'FIL' : 'EN')} className="px-2 py-1 text-[10px] font-body font-semibold rounded-md bg-primary-foreground/10 text-primary-foreground/70 hover:bg-primary-foreground/20 transition-colors">{lang}</button>
+                <button onClick={toggleLang} className="px-2 py-1 text-[10px] font-body font-semibold rounded-md bg-primary-foreground/10 text-primary-foreground/70 hover:bg-primary-foreground/20 transition-colors">{lang}</button>
                 <button onClick={() => setIsOpen(false)} className="p-1.5 text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded-lg transition-colors"><X className="h-4 w-4" /></button>
               </div>
             </div>
 
+            {/* ── Home Screen ── */}
             {screen === 'home' && (
               <div className="flex-1 overflow-y-auto px-4 py-5">
                 <p className="font-heading text-base font-bold text-foreground mb-1">{lang === 'EN' ? 'Who are you?' : 'Sino ka?'}</p>
@@ -214,24 +336,41 @@ export default function ChatBot() {
                 <p className="font-body text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{lang === 'EN' ? 'Quick Access' : 'Mabilis na Access'}</p>
                 <div className="space-y-2">
                   {[
-                    { icon: Gamepad2, label: 'App Safety Checker', action: () => startChat('PARENT') },
-                    { icon: Scale, label: lang === 'EN' ? 'Philippine Law Explainer' : 'Paliwanag ng Batas', action: () => startChat('PARENT') },
-                    { icon: Lock, label: 'Privacy Settings Guide', action: () => startChat('PARENT') },
-                    { icon: HelpCircle, label: lang === 'EN' ? 'Frequently Asked Questions' : 'Mga Madalas na Tanong', action: () => startChat('CHILD') },
-                    { icon: BookOpen, label: lang === 'EN' ? 'Classroom Lesson Guide' : 'Gabay sa Leksyon', action: () => startChat('TEACHER') },
+                    { icon: Gamepad2, label: 'App Safety Checker', labelFil: 'App Safety Checker', mode: 'PARENT', prompt: 'Which apps are safe for children?' },
+                    { icon: Scale,    label: 'Philippine Law Explainer', labelFil: 'Paliwanag ng Batas', mode: 'PARENT', prompt: 'Explain Philippine online safety laws for children.' },
+                    { icon: Lock,     label: 'Privacy Settings Guide', labelFil: 'Gabay sa Privacy Settings', mode: 'PARENT', prompt: 'How do I set up privacy settings to protect my child?' },
+                    { icon: HelpCircle, label: 'Frequently Asked Questions', labelFil: 'Mga Madalas na Tanong', mode: 'CHILD', prompt: 'What are the most common online safety questions?' },
+                    { icon: BookOpen, label: 'Classroom Lesson Guide', labelFil: 'Gabay sa Leksyon', mode: 'TEACHER', prompt: 'Give me a classroom lesson guide for online safety.' },
                   ].map((item, i) => (
-                    <button key={i} onClick={item.action} className="w-full flex items-center gap-3 px-4 py-3 bg-muted/40 hover:bg-accent/5 rounded-xl transition-all text-left border border-transparent hover:border-accent/20">
+                    <button key={i} onClick={() => startChat(item.mode, item.prompt)} className="w-full flex items-center gap-3 px-4 py-3 bg-muted/40 hover:bg-accent/5 rounded-xl transition-all text-left border border-transparent hover:border-accent/20">
                       <item.icon className="h-4 w-4 text-accent flex-shrink-0" />
-                      <span className="font-body text-sm text-foreground">{item.label}</span>
+                      <span className="font-body text-sm text-foreground">{lang === 'EN' ? item.label : item.labelFil}</span>
                     </button>
                   ))}
                 </div>
               </div>
             )}
 
+            {/* ── Chat Screen ── */}
             {screen === 'chat' && (
               <>
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+
+                  {/* Suggestion chips */}
+                  {showChips && chips.length > 0 && messages.length <= 1 && (
+                    <div className="space-y-1.5 pt-1">
+                      <p className="font-body text-[10px] text-muted-foreground uppercase tracking-wider px-1">
+                        {lang === 'EN' ? '💡 Try asking:' : '💡 Subukan itanong:'}
+                      </p>
+                      {chips.map((chip, i) => (
+                        <button key={i} onClick={() => { setShowChips(false); sendMessage(chip); }}
+                          className="w-full text-left text-xs font-body text-accent bg-accent/5 border border-accent/20 rounded-xl px-3 py-2 hover:bg-accent/10 transition-colors">
+                          {chip}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
                   {messages.map((msg, i) => (
                     <div key={i}>
                       {msg.type === 'emergency' ? (
@@ -257,12 +396,13 @@ export default function ChatBot() {
                       ) : (
                         <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 font-body text-sm leading-relaxed ${msg.role === 'user' ? 'bg-accent text-accent-foreground rounded-br-sm' : 'bg-white border border-border text-foreground rounded-bl-sm shadow-sm'}`}>
-                            {msg.content.split('\n').map((line, j) => <span key={j}>{line}{j < msg.content.split('\n').length - 1 && <br />}</span>)}
+                            <MessageContent content={msg.content} />
                           </div>
                         </div>
                       )}
                     </div>
                   ))}
+
                   {isLoading && (
                     <div className="flex justify-start">
                       <div className="bg-white border border-border rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
@@ -270,7 +410,9 @@ export default function ChatBot() {
                       </div>
                     </div>
                   )}
-                  {messages.length === 1 && !isLoading && quickActions.length > 0 && (
+
+                  {/* Quick actions shown after greeting if no chips */}
+                  {messages.length === 1 && !isLoading && !showChips && quickActions.length > 0 && (
                     <div className="space-y-1.5 pt-1">
                       <p className="font-body text-[10px] text-muted-foreground uppercase tracking-wider px-1">{lang === 'EN' ? 'Quick questions:' : 'Mabilis na tanong:'}</p>
                       {quickActions.map((qa, i) => (
@@ -278,8 +420,11 @@ export default function ChatBot() {
                       ))}
                     </div>
                   )}
+
                   <div ref={messagesEndRef} />
                 </div>
+
+                {/* ── Input Footer ── */}
                 <div className="px-4 pb-4 pt-2 border-t border-border/50 flex-shrink-0">
                   <div className="flex items-end gap-2 bg-white border border-border rounded-xl px-3 py-2 shadow-sm focus-within:border-accent/50 transition-colors">
                     <textarea ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown}
@@ -289,7 +434,9 @@ export default function ChatBot() {
                       <Send className="h-3.5 w-3.5" />
                     </button>
                   </div>
-                  <p className="font-body text-[10px] text-muted-foreground/60 text-center mt-1.5">SafeNet PH — NEMSU Research Project</p>
+                  <p className="font-body text-[10px] text-muted-foreground/60 text-center mt-1.5">
+                    🔒 {lang === 'EN' ? 'Your conversation is private' : 'Pribado ang iyong usapan'} • Emergency: <a href="tel:911" className="text-red-500 font-semibold">911</a> | <a href="tel:1383" className="text-red-500 font-semibold">1383</a>
+                  </p>
                 </div>
               </>
             )}

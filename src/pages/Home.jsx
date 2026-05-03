@@ -76,11 +76,6 @@ export default function Home() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32 lg:py-40 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
-            <ScrollReveal>
-              <span className="inline-flex items-center gap-2 font-body text-xs font-bold tracking-[0.15em] uppercase text-primary bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-6">
-                NEMSU Academic Case Study
-              </span>
-            </ScrollReveal>
             <ScrollReveal delay={0.1}>
               <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black text-foreground leading-tight mb-6">
                 Protecting Filipino
