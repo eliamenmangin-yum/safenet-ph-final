@@ -81,14 +81,15 @@ const QUICK_ACTIONS = {
   ],
 };
 
+// ─── FIX 1: Correct emergency contacts (removed wrong numbers) ───────────────
 const EMERGENCY_CONTACTS = [
-  { name: 'PNP Anti-Cybercrime Group', number: '#0998 - 598 - 8102', type: 'call' },
+  { name: 'PNP Anti-Cybercrime Group', number: '#0998-598-8102', type: 'call' },
   { name: 'MAKABATA Helpline', number: '1383', type: 'call' },
   { name: 'PICACC', number: 'https://picacc.gov.ph', type: 'web' },
-  { name: 'DSWD Hotline', number: '0931 - 755 - 3702', type: 'call' },
+  { name: 'DSWD Hotline', number: '0931-755-3702', type: 'call' },
 ];
 
-// ─── Greetings (bilingual, richer — from old bot) ─────────────────────────────
+// ─── FIX 2: Updated GREETINGS — replaced #777 with correct PNP-ACG number ────
 const GREETINGS = {
   PARENT: {
     EN:  "Hello! I'm <strong>SafeNet PH Bot</strong> in Parent Mode.<br/><br/>I'm here to help you understand online risks, recognize warning signs, and protect your child. What would you like to know?",
@@ -103,8 +104,9 @@ const GREETINGS = {
     FIL: "Magandang araw po, Guro! Ako si <strong>SafeNet PH Bot</strong>.<br/><br/>Makakatulong ako sa pagplanong mga aralin tungkol sa online safety. Ano ang kailangan ninyo?",
   },
   EMERGENCY: {
-    EN:  "⚠️ <strong>Emergency Mode.</strong><br/><br/>If you are in immediate physical danger, please call <strong>911</strong> first.<br/><br/>For online safety emergencies:<br/>📞 PNP-ACG: <strong>#777</strong><br/>📞 MAKABATA: <strong>1383</strong><br/><br/>Describe your situation below — you are not alone.",
-    FIL: "⚠️ <strong>Emergency Mode.</strong><br/><br/>Kung nasa agarang panganib ka, tumawag sa <strong>911</strong>.<br/><br/>Para sa online safety:<br/>📞 PNP-ACG: <strong>#777</strong><br/>📞 MAKABATA: <strong>1383</strong><br/><br/>Sabihin mo sa akin ang iyong sitwasyon. Nandito lang ako.",
+    // ✅ FIXED: Was "#777" — now uses the correct "#0998-598-8102"
+    EN:  "⚠️ <strong>Emergency Mode.</strong><br/><br/>If you are in immediate physical danger, please call <strong>911</strong> first.<br/><br/>For online safety emergencies:<br/>📞 PNP-ACG: <strong>#0998-598-8102</strong><br/>📞 MAKABATA: <strong>1383</strong><br/>📞 DSWD: <strong>0931-755-3702</strong><br/><br/>Describe your situation below — you are not alone.",
+    FIL: "⚠️ <strong>Emergency Mode.</strong><br/><br/>Kung nasa agarang panganib ka, tumawag sa <strong>911</strong>.<br/><br/>Para sa online safety:<br/>📞 PNP-ACG: <strong>#0998-598-8102</strong><br/>📞 MAKABATA: <strong>1383</strong><br/>📞 DSWD: <strong>0931-755-3702</strong><br/><br/>Sabihin mo sa akin ang iyong sitwasyon. Nandito lang ako.",
   },
 };
 
@@ -128,8 +130,9 @@ async function callAI(messages, mode, lang, sessionId) {
   return data.reply || 'Sorry, I could not process that. Please try again.';
 }
 
-// ─── Highlight emergency numbers in bot replies ───────────────────────────────
-const EMERGENCY_NUMBER_RE = /(#0998 - 598 - 8102|1383|0931 - 755 - 3702|\(02\)523-8231|911)/g;
+// ─── FIX 3: Updated regex — removed wrong (02)523-8231, added flexible spacing ─
+// Matches numbers the AI might return with varied spacing/dashes e.g. "0998 598 8102"
+const EMERGENCY_NUMBER_RE = /(#?0998[-\s]?598[-\s]?8102|1383|0931[-\s]?755[-\s]?3702|911)/g;
 
 function highlightNumbers(html) {
   return html.replace(
@@ -137,6 +140,7 @@ function highlightNumbers(html) {
     `<span style="display:inline-flex;align-items:center;gap:4px;background:#fef2f2;border:1px solid #fca5a5;color:#c0392b;font-weight:700;border-radius:999px;padding:1px 8px;font-size:12px;white-space:nowrap;">📞 $1</span>`
   );
 }
+
 
 // ─── Render HTML messages safely ──────────────────────────────────────────────
 function MessageContent({ content }) {
