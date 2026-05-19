@@ -64,7 +64,7 @@ const MODES = [
   { id: 'PARENT', label: 'Parent', labelFil: 'Magulang', labelBis: 'Magulang', icon: Users, color: 'text-blue-600' },
   { id: 'CHILD', label: 'Child', labelFil: 'Bata', labelBis: 'Bata', icon: Shield, color: 'text-green-600' },
   { id: 'TEACHER', label: 'Teacher', labelFil: 'Guro', labelBis: 'Magtutudlo', icon: GraduationCap, color: 'text-purple-600' },
-  { id: 'EMERGENCY', label: 'Emergency', labelFil: 'Emergency', labelBis: 'Emergency', icon: AlertTriangle, color: 'text-red-600' },
+  { id: 'EMERGENCY', label: 'Emergency Contact', labelFil: 'Emergency Contact', labelBis: 'Emergency Contact', icon: AlertTriangle, color: 'text-red-600' },
 ];
 
 const QUICK_ACTIONS = {

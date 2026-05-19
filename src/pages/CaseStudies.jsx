@@ -116,6 +116,15 @@ export default function CaseStudies() {
           </div>
         </div>
       </section>
+       {/* AI Disclaimer Banner */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-8">
+        <div className="flex items-start gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-5 py-4">
+          <span className="text-yellow-500 text-lg flex-shrink-0 mt-0.5">⚠️</span>
+          <p className="font-body text-sm text-yellow-800 leading-relaxed">
+            <span className="font-bold">Disclaimer:</span> All case files on this page are <span className="font-semibold">AI-generated illustrative scenarios</span>. They are not sourced from real individuals or actual court records. These narratives are composite examples constructed to represent documented OSAEC patterns as described in published reports by UNICEF, IJM, and Philippine law enforcement agencies — for educational purposes only.
+          </p>
+        </div>
+      </div>
 
       {/* Case Studies Grid */}
       <section className="py-24 lg:py-32">
