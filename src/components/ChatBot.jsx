@@ -141,15 +141,12 @@ function highlightNumbers(html) {
   );
 }
 
-
 // ─── Render HTML messages safely ──────────────────────────────────────────────
 function MessageContent({ content }) {
-  // If already HTML (greetings), highlight numbers then render
   if (/<[a-z][\s\S]*>/i.test(content)) {
     return <div dangerouslySetInnerHTML={{ __html: highlightNumbers(content) }} />;
   }
 
-  // Plain text — convert markdown-like bold, newlines, then highlight numbers
   const html = content
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+?)\*/g, '<em>$1</em>')
@@ -176,14 +173,12 @@ export default function ChatBot() {
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, isLoading]);
   useEffect(() => { if (screen === 'chat') inputRef.current?.focus(); }, [screen]);
 
-  // Persist chat history per mode
   useEffect(() => {
     if (screen === 'chat' && mode && messages.length > 0) {
       saveHistory(mode, messages);
     }
   }, [messages, mode, screen]);
 
-  // ── Send to API ──────────────────────────────────────────────────────────────
   const sendToApi = useCallback(async (history, activeMode, activeLang) => {
     setIsLoading(true);
     try {
@@ -199,7 +194,6 @@ export default function ChatBot() {
     }
   }, []);
 
-  // ── Start chat / restore history ─────────────────────────────────────────────
   const startChat = useCallback((selectedMode, autoPrompt) => {
     const savedHistory = loadHistory(selectedMode);
     const hasHistory = savedHistory.length > 0 && !autoPrompt;
@@ -230,7 +224,6 @@ export default function ChatBot() {
     }
   }, [lang, sendToApi]);
 
-  // ── Go back home ─────────────────────────────────────────────────────────────
   const goHome = () => {
     setScreen('home');
     setMode(null);
@@ -241,7 +234,6 @@ export default function ChatBot() {
     setIsLoading(false);
   };
 
-  // ── Toggle language ───────────────────────────────────────────────────────────
   const toggleLang = () => {
     const next = lang === 'EN' ? 'FIL' : 'EN';
     setLang(next);
@@ -254,7 +246,6 @@ export default function ChatBot() {
     }
   };
 
-  // ── Main send ─────────────────────────────────────────────────────────────────
   const sendMessage = useCallback(async (text) => {
     const userText = (text ?? input).trim();
     if (!userText || isLoading) return;
@@ -360,7 +351,6 @@ export default function ChatBot() {
               <>
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
 
-                  {/* Suggestion chips */}
                   {showChips && chips.length > 0 && messages.length <= 1 && (
                     <div className="space-y-1.5 pt-1">
                       <p className="font-body text-[10px] text-muted-foreground uppercase tracking-wider px-1">
@@ -415,7 +405,6 @@ export default function ChatBot() {
                     </div>
                   )}
 
-                  {/* Quick actions shown after greeting if no chips */}
                   {messages.length === 1 && !isLoading && !showChips && quickActions.length > 0 && (
                     <div className="space-y-1.5 pt-1">
                       <p className="font-body text-[10px] text-muted-foreground uppercase tracking-wider px-1">{lang === 'EN' ? 'Quick questions:' : 'Mabilis na tanong:'}</p>
