@@ -81,7 +81,6 @@ const QUICK_ACTIONS = {
   ],
 };
 
-// ─── FIX 1: Correct emergency contacts (removed wrong numbers) ───────────────
 const EMERGENCY_CONTACTS = [
   { name: 'PNP Anti-Cybercrime Group', number: '#0998-598-8102', type: 'call' },
   { name: 'MAKABATA Helpline', number: '1383', type: 'call' },
@@ -178,7 +177,25 @@ export default function ChatBot() {
       saveHistory(mode, messages);
     }
   }, [messages, mode, screen]);
+// Add this AFTER your existing useEffect hooks (around line 180-190)
+// This will run once per user to clear old data
 
+useEffect(() => {
+  // One-time migration: clear all old chat histories
+  const MIGRATION_KEY = 'safebot_v2_migrated';
+  
+  if (!localStorage.getItem(MIGRATION_KEY)) {
+    // Clear all mode-specific histories
+    MODES.forEach(m => {
+      localStorage.removeItem(STORAGE_KEY(m.id));
+    });
+    
+    // Mark migration as complete
+    localStorage.setItem(MIGRATION_KEY, 'true');
+    
+    console.log('✅ SafeNet Bot: Old chat histories cleared');
+  }
+}, []);
   const sendToApi = useCallback(async (history, activeMode, activeLang) => {
     setIsLoading(true);
     try {
@@ -313,6 +330,29 @@ export default function ChatBot() {
                 <button onClick={() => setIsOpen(false)} className="p-1.5 text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded-lg transition-colors"><X className="h-4 w-4" /></button>
               </div>
             </div>
+            <div className="flex items-center gap-1.5">
+                <button onClick={toggleLang} className="px-2 py-1 text-[10px] font-body font-semibold rounded-md bg-primary-foreground/10 text-primary-foreground/70 hover:bg-primary-foreground/20 transition-colors">{lang}</button>
+                  {/* ADD THIS NEW BUTTON HERE: */}
+                    {screen === 'chat' && (
+                      <button onClick={() => {
+                        if (confirm(lang === 'EN' 
+                            ? 'Clear this conversation history?' 
+                            : 'Burahin ang kasaysayan ng usapan?'
+                        )) {
+                            localStorage.removeItem(STORAGE_KEY(mode));
+                            setMessages([{ role: 'assistant', content: GREETINGS[mode][lang] }]);
+                            setShowChips(true);
+                            setChips((MODE_SUGGESTIONS[mode]?.[lang] ?? []).slice(0, 2));
+                          }
+                        }}
+                        className="px-2 py-1 text-[10px] font-body font-semibold rounded-md bg-primary-foreground/10 text-primary-foreground/70 hover:bg-primary-foreground/20 transition-colors"
+                        title={lang === 'EN' ? 'Clear chat' : 'Burahin'}
+                      >
+                        🗑️
+                    </button>
+                  )}
+                  <button onClick={() => setIsOpen(false)} className="p-1.5 text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded-lg transition-colors"><X className="h-4 w-4" /></button>
+                  </div>
 
             {/* ── Home Screen ── */}
             {screen === 'home' && (
