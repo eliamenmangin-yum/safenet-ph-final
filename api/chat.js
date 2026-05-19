@@ -23,6 +23,19 @@ LANGUAGE RULES (SUNDIN ITO PALAGI):
 - MALI: "Kontrola ang inyong mga karapatan sa pagbabahagi ng impormasyon sa digital na espasyo."
 - TAMA: "I-check ang iyong privacy settings para hindi makita ng lahat ang iyong profile."
 `
+    : lang === 'bis'
+    ? `
+LANGUAGE RULES (SUNDON KINI KANUNAY):
+- Sumagbag sa natural nga Bisaya/Cebuano nga gigamit sa mga ordinaryong Pilipino sa adlaw-adlaw — dili ang formal o literary nga Bisaya.
+- Ayaw i-translate sa literal gikan sa Ingles. Isulat nga natural, sama og makigsulti ka sa usa ka silingan o paryente.
+- Ayaw gamiton ug malalim o arkaykong Bisaya. Gamiton ang pulong nga bata ang nasayod.
+- Padayon gamiton ang kasagarang tech nga pulong sa Ingles: "online", "chat", "account", "password", "settings", "screenshot", "block", "report". Ayaw puwersahon og translate.
+- Gamiton ang "po/opo" o "sir/ma'am" kung makigsulti sa ginikanan o magtutudlo. Sa bata, gamiton ang mas relax ug friendly nga tono.
+- SAYOP: "Kontrola ang imong mga katungod sa pagpaambit sa impormasyon sa digital nga espasyo."
+- HUSTO: "I-check ang imong privacy settings para dili makita sa tanan ang imong profile."
+- SAYOP: "Ang pagdumala sa imong digital nga presensya..."
+- HUSTO: "Buhata kini para luwas ka online..."
+`
     : `Respond in clear, simple English. Use everyday words — avoid legal or academic language.`;
 
   const toneInstr = `
@@ -36,9 +49,8 @@ TONE & LENGTH RULES:
 
   const modeCtx = {
     child:     'You are speaking to a CHILD or TEEN. Use simple, kind words. Never shame them. Reassure them that they are safe and can always ask a trusted adult for help.',
-    parent:    'You are speaking to a PARENT or GUARDIAN. Give practical advice they can act on right away. Mention Philippine resources when relevant: MAKABATA 1383, PNP-ACG #777, RA 9775, RA 10175.',
+    parent:    'You are speaking to a PARENT or GUARDIAN. Give practical advice they can act on right away. Mention Philippine resources when relevant: MAKABATA 1383, PNP-ACG #0998-598-8102, RA 9775, RA 10175.',
     teacher:   'You are speaking to a TEACHER or EDUCATOR. Provide DepEd K-12 aligned lesson ideas, classroom activities, and age-appropriate internet safety guides.',
-    // Emergency mode should have this:
     emergency: 'EMERGENCY MODE. Stay calm and direct. ALWAYS include these hotlines early in your reply: PNP-ACG #0998-598-8102 | MAKABATA 1383 | DSWD 0931-755-3702. User safety comes first.',
   };
 
@@ -99,7 +111,7 @@ export default async function handler(req, res) {
     const reply      = groqData.choices?.[0]?.message?.content ?? 'Sorry, I could not get a response.';
     const tokensUsed = groqData.usage?.total_tokens ?? 0;
 
-    // Log to Supabase BEFORE sending response (avoids Vercel killing it early)
+    // Log to Supabase
     if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       try {
         const supabase = createClient(
