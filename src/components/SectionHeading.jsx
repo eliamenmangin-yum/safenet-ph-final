@@ -1,5 +1,8 @@
 import ScrollReveal from './ScrollReveal';
 
+/**
+ * @param {{ label?: string, title: string, description?: string, align?: 'left' | 'center' }} props
+ */
 export default function SectionHeading({ label, title, description, align = 'left' }) {
   const alignClass = align === 'center' ? 'text-center mx-auto' : 'text-left';
 

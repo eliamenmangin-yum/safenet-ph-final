@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
+/**
+ * @param {{ children: import('react').ReactNode, className?: string, delay?: number }} props
+ */
 export default function ScrollReveal({ children, className = '', delay = 0 }) {
   return (
     <motion.div

@@ -11,25 +11,29 @@ const stats = [
     value: 2,
     suffix: 'M+',
     label: 'Filipino child victims of online sexual exploitation (2020–2021)',
-    citation: 'UNICEF, ECPAT International, & Interpol, 2022',
+    citation: 'UNICEF, ECPAT & Interpol, 2022',
+    href: 'https://www.unicef.org/philippines/reports/disrupting-harm-philippines',
   },
   {
     value: 279000,
     suffix: '+',
     label: 'OSAEC cases reported to global authorities from the Philippines (2022)',
     citation: 'CICC, 2023',
+    href: 'https://cicc.gov.ph/',
   },
   {
     value: 13,
     suffix: '%',
     label: 'Of youth respondents aware of the MAKABATA 1383 helpline',
     citation: 'UNICEF Philippines, 2024',
+    href: 'https://www.unicef.org/philippines/stories/young-people-philippines-speak-out-online-safety',
   },
   {
     value: 3,
     suffix: 'x',
     label: 'Increase in OSAEC cases recorded during the COVID-19 pandemic',
     citation: 'Justice and Care, 2023',
+    href: 'https://justiceandcare.org/app/uploads/2023/10/Justice-and-Care-Issue-Brief_Online-Sexual-Exploitation-of-Children_Oct-2023.pdf',
   },
 ];
 

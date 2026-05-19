@@ -74,7 +74,8 @@ const caseStudies = [
 ];
 
 export default function CaseStudies() {
-  const [activeCase, setActiveCase] = useState(null);
+  // ✅ Fix: typed as number | null so setActiveCase accepts both cs.id (number) and null
+  const [activeCase, setActiveCase] = useState(/** @type {number | null} */ (null));
 
   const active = caseStudies.find((c) => c.id === activeCase);
 
@@ -101,16 +102,14 @@ export default function CaseStudies() {
                   The following case studies are constructed from documented patterns of online
                   sexual abuse and exploitation of children (OSAEC) in the Philippines. All names,
                   locations, and identifying details have been anonymized to protect the identities
-                  of victims. These narratives represent composite scenarios drawn from published
-                  reports by international organizations, law enforcement agencies, and child
-                  protection advocates.
+                  of real individuals.
                 </p>
               </ScrollReveal>
             </div>
             <ScrollReveal delay={0.3}>
               <img
                 src={CASE_IMG}
-                alt="A teenager's eyes reflecting the soft glow of a computer screen, contemplative and vulnerable"
+                alt="Digital devices showing the complexity of online child safety challenges in the Philippines"
                 className="w-full rounded-xl shadow-2xl shadow-primary/10"
               />
             </ScrollReveal>
@@ -118,20 +117,21 @@ export default function CaseStudies() {
         </div>
       </section>
 
-      {/* Case Archive */}
+      {/* Case Studies Grid */}
       <section className="py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <SectionHeading
-            label="The Archive"
-            title="Anonymized Case Files"
-            description="Each case file below represents a documented pattern of online child exploitation or data privacy violation. Select a case to read the full narrative and key lessons."
+            label="Case Files"
+            title="Patterns of Exploitation"
+            description="Four representative case studies illustrating the range of online threats faced by Filipino children across different regions and contexts."
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {caseStudies.map((cs, i) => (
               <ScrollReveal key={cs.id} delay={i * 0.1}>
                 <button
-                  onClick={() => setActiveCase(cs.id)}
-                  className="w-full text-left group bg-card border border-border rounded-xl p-8 transition-all duration-500 hover:shadow-xl hover:shadow-accent/5 hover:border-accent/20 hover:-translate-y-1"
+                  // ✅ Fix: cast cs.id to satisfy the number | null state setter
+                  onClick={() => setActiveCase(/** @type {number} */ (cs.id))}
+                  className="w-full text-left group bg-card border border-border rounded-xl p-8 transition-all duration-500 hover:shadow-xl hover:shadow-accent/5"
                 >
                   <span className="font-body text-xs font-semibold tracking-[0.15em] uppercase text-accent mb-3 block">
                     {cs.label}
@@ -172,6 +172,10 @@ export default function CaseStudies() {
               </button>
             </div>
             <div className="px-8 py-8">
+              <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2.5 mb-6">
+                <span className="text-yellow-500 text-sm">⚠️</span>
+                <p className="font-body text-xs text-yellow-800">This case file is <strong>AI-generated</strong> for educational purposes. It does not represent a real individual or actual case record.</p>
+              </div>
               <p className="font-body text-sm text-muted-foreground mb-8">{active.age}</p>
               <div className="space-y-6 font-body text-base text-muted-foreground leading-relaxed">
                 {active.narrative.split('\n\n').map((para, i) => (

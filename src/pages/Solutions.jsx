@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Globe, MessageCircle, BookOpen, Users, Shield, BarChart3 } from 'lucide-react';
+import { ArrowRight, Globe, MessageCircle, BookOpen, Users, Shield, BarChart3, Brain, FileText, UserCheck, GraduationCap } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 import SectionHeading from '../components/SectionHeading';
 import DownloadableToolkit from '../components/DownloadableToolkit';
@@ -87,44 +87,6 @@ export default function Solutions() {
         </div>
       </section>
 
-      {/* Problem-Solution Bridge */}
-      <section className="py-24 lg:py-32">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8">
-          <SectionHeading
-            label="The Gap"
-            title="From Research to Reach"
-          />
-          <ScrollReveal>
-            <div className="space-y-6 font-body text-base md:text-lg text-muted-foreground leading-relaxed">
-              <p>
-                The preceding sections of this research have established two fundamental realities.
-                First, Filipino children face an escalating spectrum of online threats — from sexual
-                exploitation and grooming to data privacy violations — driven by a convergence of
-                socioeconomic vulnerability, platform accessibility, and enforcement limitations.
-                Second, the existing knowledge and educational infrastructure is insufficient to
-                equip families and communities with the awareness needed to protect children in
-                digital environments.
-              </p>
-              <p>
-                SafeNet PH was developed in response to this specific gap. The platform recognizes
-                that while legislative reform and law enforcement capacity are essential components
-                of child protection, they operate primarily in the reactive domain — addressing abuse
-                after it has occurred. Prevention, by contrast, requires a proactive approach:
-                education, awareness, and the democratization of knowledge. This is the space that
-                SafeNet PH occupies.
-              </p>
-              <p>
-                Conceived as an academic IT case study at North Eastern Mindanao State University,
-                SafeNet PH applies information technology as an instrument of social advocacy. The
-                platform is not a substitute for institutional action but rather a complement — a
-                tool that empowers individuals and communities to become active participants in the
-                protection of children, informed by research and supported by technology.
-              </p>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
       {/* Features Grid */}
       <section className="py-24 lg:py-32 bg-muted/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -153,42 +115,137 @@ export default function Solutions() {
 
       {/* Chatbot Highlight */}
       <section className="py-24 lg:py-32">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto px-6 lg:px-8">
           <SectionHeading
             label="Core Innovation"
             title="The SafeNet PH AI Chatbot"
+            description="An intelligent conversational agent available 24/7 in English and Filipino — built on verified Philippine law, academic research, and child protection data."
           />
+
+          {/* What it is */}
           <ScrollReveal>
-            <div className="space-y-6 font-body text-base md:text-lg text-muted-foreground leading-relaxed">
-              <p>
-                The centerpiece of SafeNet PH's technological intervention is its AI-powered chatbot
-                — an intelligent conversational agent designed to serve as an always-available resource
-                for questions about children's online safety. Unlike static information repositories,
-                the chatbot engages users in dialogue, adapting its responses to the specific
-                concerns and knowledge level of each user.
-              </p>
-              <p>
-                The chatbot's knowledge base is constructed from verified sources: Philippine
-                legislative texts, reports from the Department of Justice and the Philippine National
-                Police, publications from international organizations including UNICEF, IJM, and
-                ECPAT, and peer-reviewed academic research on online child exploitation. This
-                ensures that every response is grounded in evidence rather than assumption.
-              </p>
-              <p>
-                For parents, the chatbot can explain how to configure privacy settings on specific
-                social media platforms, describe the warning signs of online grooming, and provide
-                step-by-step guidance on reporting suspected exploitation. For educators, it offers
-                suggestions for integrating digital safety concepts into classroom instruction. For
-                children and adolescents, it communicates in age-appropriate language, helping young
-                users understand what constitutes inappropriate online behavior and how to seek help.
-              </p>
-              <p>
-                The chatbot represents the conviction at the heart of SafeNet PH: that the most
-                effective protection is an informed population, and that technology — the very medium
-                through which children face risk — can also serve as the medium through which they
-                are empowered to protect themselves.
-              </p>
+            <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 md:p-8 mb-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Brain className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-heading text-base font-bold text-foreground mb-2">What It Is</h3>
+                  <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                    Unlike static FAQs, the SafeNet PH chatbot engages users in real dialogue — adapting responses to the specific concern and knowledge level of each user. It is grounded in Philippine legislative texts, DOJ and PNP reports, UNICEF and IJM publications, and peer-reviewed research on online child exploitation.{' '}
+                    <a href="https://www.unicef.org/philippines/reports/disrupting-harm-philippines" target="_blank" rel="noopener noreferrer" className="text-accent underline text-xs hover:opacity-80">UNICEF, ECPAT & Interpol, 2022</a>
+                  </p>
+                </div>
+              </div>
             </div>
+          </ScrollReveal>
+
+          {/* Who it serves */}
+          <ScrollReveal delay={0.1}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {[
+                {
+                  icon: Shield,
+                  role: 'Parents & Guardians',
+                  color: 'bg-blue-50 border-blue-100',
+                  iconBg: 'bg-blue-100',
+                  iconColor: 'text-primary',
+                  points: [
+                    'Configure privacy settings on social media',
+                    'Recognize warning signs of online grooming',
+                    'Step-by-step reporting guidance',
+                  ],
+                },
+                {
+                  icon: GraduationCap,
+                  role: 'Educators',
+                  color: 'bg-purple-50 border-purple-100',
+                  iconBg: 'bg-purple-100',
+                  iconColor: 'text-purple-600',
+                  points: [
+                    'Integrate digital safety into curricula',
+                    'Understand mandatory reporting obligations',
+                    'Access classroom-ready resources',
+                  ],
+                },
+                {
+                  icon: UserCheck,
+                  role: 'Children & Teens',
+                  color: 'bg-accent/5 border-accent/10',
+                  iconBg: 'bg-accent/10',
+                  iconColor: 'text-accent',
+                  points: [
+                    'Age-appropriate language and guidance',
+                    'Identify inappropriate online behavior',
+                    'Know how and where to seek help',
+                  ],
+                },
+              ].map((card, i) => (
+                <div key={i} className={`rounded-2xl border p-5 ${card.color}`}>
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${card.iconBg}`}>
+                    <card.icon className={`h-4 w-4 ${card.iconColor}`} />
+                  </div>
+                  <h4 className="font-heading text-sm font-bold text-foreground mb-3">{card.role}</h4>
+                  <ul className="space-y-1.5">
+                    {card.points.map((pt, j) => (
+                      <li key={j} className="font-body text-xs text-muted-foreground flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 mt-1.5 flex-shrink-0" />
+                        {pt}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </ScrollReveal>
+
+          {/* Knowledge base */}
+          <ScrollReveal delay={0.2}>
+            <div className="bg-accent/5 border border-accent/10 rounded-2xl p-6 md:p-8 mb-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <FileText className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="font-heading text-base font-bold text-foreground mb-2">Verified Knowledge Base</h3>
+                  <p className="font-body text-sm text-muted-foreground leading-relaxed mb-3">
+                    Every response is evidence-based, drawn from authoritative Philippine and international sources — not assumptions.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: 'RA 11930 (2022)', href: 'https://lawphil.net/statutes/repacts/ra2022/ra_11930_2022.html' },
+                      { label: 'RA 9775 (2009)', href: 'https://lawphil.net/statutes/repacts/ra2009/ra_9775_2009.html' },
+                      { label: 'UNICEF Philippines', href: 'https://www.unicef.org/philippines/child-protection' },
+                      { label: 'IJM Philippines', href: 'https://www.ijm.org/philippines' },
+                      { label: 'PNP Anti-Cybercrime Group', href: 'https://acg.pnp.gov.ph/' },
+                    ].map((src, i) => (
+                      <a
+                        key={i}
+                        href={src.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block font-body text-xs font-semibold text-accent bg-accent/10 hover:bg-accent/20 px-3 py-1 rounded-full transition-colors"
+                      >
+                        {src.label} ↗
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* Core conviction */}
+          <ScrollReveal delay={0.3}>
+            <blockquote className="border-l-4 border-accent pl-6 py-2">
+              <p className="font-body text-base md:text-lg text-muted-foreground leading-relaxed italic">
+                "Technology — the very medium through which children face risk — can also be the medium through which they are empowered to protect themselves."
+              </p>
+              <cite className="block font-body text-xs text-muted-foreground mt-3 not-italic">
+                SafeNet PH Platform Rationale, NEMSU IT Case Study, 2024 ·{' '}
+                <a href="https://archive.opengovasia.com/2024/03/30/ensuring-digital-safety-for-children-in-the-philippines/" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:opacity-80">OpenGov Asia, 2024</a>
+              </cite>
+            </blockquote>
           </ScrollReveal>
         </div>
       </section>

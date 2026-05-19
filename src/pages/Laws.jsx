@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import ScrollReveal from '../components/ScrollReveal';
 import SectionHeading from '../components/SectionHeading';
 
@@ -12,50 +11,51 @@ const laws = [
     name: 'Republic Act No. 7610',
     title: 'Special Protection of Children Against Abuse, Exploitation and Discrimination Act (1992)',
     formal:
-      'This Act provides for stronger deterrence and special protection against child abuse, exploitation, and discrimination, providing penalties for their commission and for other purposes. It covers children who are "gravely threatened or endangered by circumstances which affect or will affect their survival and normal development," and establishes comprehensive protections across physical, emotional, and sexual abuse contexts.',
-    simplified:
-      'This is the foundational law that protects all Filipino children from any form of abuse, exploitation, and discrimination. In simple terms, it makes it a serious crime for anyone — whether a stranger, a relative, or even a parent — to abuse or exploit a child in any way. If someone hurts a child, forces them to do something inappropriate, or uses them for profit, they can face severe legal penalties including imprisonment. This law established the principle that the State has a special obligation to protect children, and it remains the bedrock upon which all subsequent child protection legislation has been built.',
+      'It is hereby declared to be the policy of the State to provide special protection to children from all forms of abuse, neglect, cruelty exploitation and discrimination and other conditions, prejudicial their development; provide sanctions for their commission and carry out a program for prevention and deterrence of and crisis intervention in situations of child abuse, exploitation and discrimination. The State shall intervene on behalf of the child when the parent, guardian, teacher or person having care or custody of the child fails or is unable to protect the child against abuse, exploitation and discrimination or when such acts against the child are committed by the said parent, guardian, teacher or person having care and custody of the same. The best interests of children shall be the paramount consideration in all actions concerning them, whether undertaken by public or private social welfare institutions, courts of law, administrative authorities, and legislative bodies, consistent with the principle of First Call for Children as enunciated in the United Nations Convention of the Rights of the Child.',
+    source: 'https://lawphil.net/statutes/repacts/ra1992/ra_7610_1992.html',
+    sourceLabel: 'Republic Act No. 7610 — LawPhil Project',
   },
   {
     id: 'ra9775',
     name: 'Republic Act No. 9775',
     title: 'Anti-Child Pornography Act of 2009',
     formal:
-      'This Act defines and criminalizes child pornography, prescribing penalties for the production, distribution, possession, and access of child sexual abuse materials. It establishes the duty of internet service providers (ISPs) to report and preserve evidence of child pornography, and mandates the installation of filtering software to block child sexual abuse materials. The law also recognizes technology-facilitated sexual exploitation as a distinct criminal act.',
-    simplified:
-      'This law specifically targets the creation, sharing, and possession of sexual images or videos involving children. If anyone takes, distributes, downloads, or even views such materials, they can face imprisonment of up to life and substantial fines. What makes this law particularly relevant today is that it also holds internet service providers (ISPs) accountable — they are required by law to report any child sexual abuse material they discover on their networks and to help law enforcement by preserving digital evidence. For parents, this means that the creation or distribution of any sexual content involving your child is a serious criminal offense, and there are legal tools available to pursue perpetrators.',
+      'The State recognizes the vital role of the youth in nation building and shall promote and protect their physical, moral, spiritual, intellectual, emotional, psychological and social well-being. Towards this end, the State shall: (a) Guarantee the fundamental rights of every child from all forms of neglect, cruelty and other conditions prejudicial to his/her development; (b) Protect every child from all forms of exploitation and abuse including, but not limited to: (1) the use of a child in pornographic performances and materials; and (2) the inducement or coercion of a child to engage or be involved in pornography through whatever means; and (c) Comply with international treaties to which the Philippines is a signatory or a State party concerning the rights of children which include, but not limited to, the Convention on the Rights of the Child, the Optional Protocol to the Convention on the Rights of the Child on the Sale of Children, Child Prostitution and Child Pornography, the International Labor Organization (ILO) Convention No. 182 on the Elimination of the Worst Forms of Child Labor and the Convention Against Transnational Organized Crime.',
+    source: 'https://lawphil.net/statutes/repacts/ra2009/ra_9775_2009.html',
+    sourceLabel: 'Republic Act No. 9775 — LawPhil Project',
   },
   {
     id: 'ra10175',
     name: 'Republic Act No. 10175',
     title: 'Cybercrime Prevention Act of 2012',
     formal:
-      'This Act defines cybercrime offenses, prescribes penalties, and provides for the prevention, investigation, suppression, and imposition of penalties for cybercrime. Relevant provisions include the criminalization of cybersex, child pornography committed through a computer system, unsolicited commercial communications, and computer-related identity theft. The law grants law enforcement the authority to collect real-time traffic data, conduct searches and seizures of computer data, and preserve computer data for investigative purposes.',
-    simplified:
-      'The Cybercrime Prevention Act is the Philippines\' primary law against crimes committed using computers and the internet. For children and families, this is important because it criminalizes online sexual exploitation (cybersex), the use of technology to distribute child sexual abuse materials, and online identity theft — including the creation of fake accounts to impersonate or deceive minors. When offenses under existing laws like RA 9775 are committed through the internet, this law imposes higher penalties. Practically, this means that if someone uses social media, messaging apps, or any digital platform to sexually exploit, harass, or deceive a child, they face enhanced criminal penalties. Law enforcement also has the authority to collect digital evidence and trace perpetrators across networks.',
+      'The State recognizes the vital role of information and communications industries such as content production, telecommunications, broadcasting electronic commerce, and data processing, in the nation\'s overall social and economic development. The State also recognizes the importance of providing an environment conducive to the development, acceleration, and rational application and exploitation of information and communications technology (ICT) to attain free, easy, and intelligible access to exchange and/or delivery of information; and the need to protect and safeguard the integrity of computer, computer and communications systems, networks, and databases, and the confidentiality, integrity, and availability of information and data stored therein, from all forms of misuse, abuse, and illegal access by making punishable under the law such conduct or conducts. In this light, the State shall adopt sufficient powers to effectively prevent and combat such offenses by facilitating their detection, investigation, and prosecution at both the domestic and international levels, and by providing arrangements for fast and reliable international cooperation.',
+    source: 'https://lawphil.net/statutes/repacts/ra2012/ra_10175_2012.html',
+    sourceLabel: 'Republic Act No. 10175 — LawPhil Project',
   },
   {
     id: 'ra10173',
     name: 'Republic Act No. 10173',
     title: 'Data Privacy Act of 2012',
     formal:
-      'This Act protects individual personal information in information and communications systems in the government and the private sector. It creates the National Privacy Commission (NPC) to administer and implement the provisions of the Act, monitor and ensure compliance, and provide assistance to data subjects. The Act establishes the rights of data subjects, the obligations of personal information controllers and processors, and the grounds for lawful processing of personal information, including sensitive personal information.',
-    simplified:
-      'The Data Privacy Act protects the personal information of all Filipinos, including children. When applications, websites, or companies collect personal data — such as names, school information, photographs, or location data — they must handle that information responsibly and securely. For parents and students, this means that any app or website your child uses is legally required to protect their personal data. If a company mishandles, sells, or exposes your child\'s information without proper consent, you can file a complaint with the National Privacy Commission. This law is particularly important in the context of educational applications that collect student data during remote learning. Parental consent is required before any entity collects personal information from children, and violations can result in imprisonment and fines.',
+      'It is the policy of the State to protect the fundamental human right of privacy, of communication while ensuring free flow of information to promote innovation and growth. The State recognizes the vital role of information and communications technology in nation-building and its inherent obligation to ensure that personal information in information and communications systems in the government and in the private sector are secured and protected.',
+    source: 'https://lawphil.net/statutes/repacts/ra2012/ra_10173_2012.html',
+    sourceLabel: 'Republic Act No. 10173 — LawPhil Project',
   },
   {
     id: 'ra11930',
     name: 'Republic Act No. 11930',
     title: 'Anti-Online Sexual Abuse or Exploitation of Children (Anti-OSAEC) Act of 2022',
     formal:
-      'This Act institutionalizes stronger mechanisms for the prevention, detection, investigation, and prosecution of online sexual abuse or exploitation of children. It expands the definition of OSAEC to include grooming, live-streaming of sexual abuse, sexting involving minors, and the production or distribution of child sexual exploitation materials. The Act establishes the Inter-Agency Council Against Online Sexual Abuse or Exploitation of Children and mandates internet intermediaries to adopt mechanisms for reporting, preserving, blocking, and removing OSAEC content.',
-    simplified:
-      'This is the most comprehensive and recent Philippine law directly addressing online child exploitation. Signed in 2022, it was specifically designed to respond to the modern landscape of digital abuse. In clear terms, this law makes it a crime to groom a child online (the process of building trust with a child in order to exploit them), to livestream sexual abuse of a child, to engage in sexting with a minor, and to produce or share any sexual exploitation material involving children. The law also created a special inter-agency council that coordinates the government\'s response to OSAEC cases. Importantly, it requires social media platforms, messaging apps, and internet providers to actively detect, report, and remove OSAEC content. For families, RA 11930 represents the strongest legal tool currently available for protecting children in the digital environment.',
+      'It is the policy of the State to provide special protections to children from all forms of sexual violence, abuse and exploitation especially those committed with the use of information and communications technology (ICT), provide sanctions for their commission and carry out programs for the prevention, deterrence and intervention in all situations of online sexual abuse and exploitation of children in the digital and non-digital production, distribution or possession of child sexual abuse or exploitation material. The State shall guarantee the fundamental rights of every child from all forms of neglect, cruelty and other conditions prejudicial to their development, and shall protect every child from all forms of abuse or exploitation, whether committed with or without the use of ICT, including performances and materials through online or offline means, and the inducement or coercion of a child to engage or be involved in child sexual abuse or exploitation materials through whatever means.',
+    source: 'https://lawphil.net/statutes/repacts/ra2022/ra_11930_2022.html',
+    sourceLabel: 'Republic Act No. 11930 — LawPhil Project',
   },
 ];
 
 export default function Laws() {
-  const [expandedLaw, setExpandedLaw] = useState(null);
+  // ✅ Fix: typed as string | null so setExpandedLaw accepts both law.id (string) and null
+  const [expandedLaw, setExpandedLaw] = useState(/** @type {string | null} */ (null));
 
   return (
     <div>
@@ -79,9 +79,8 @@ export default function Laws() {
                 <p className="font-body text-lg text-muted-foreground leading-relaxed max-w-xl">
                   The Philippines has enacted a series of legislative measures that form a
                   comprehensive legal framework for protecting children in both physical and digital
-                  environments. This section presents each law alongside a simplified explanation to
-                  ensure that parents, educators, and students understand the protections available
-                  to them.
+                  environments. Each law below displays its official Declaration of Policy, sourced
+                  directly from the LawPhil Project — the Philippines' authoritative legal database.
                 </p>
               </ScrollReveal>
             </div>
@@ -102,8 +101,18 @@ export default function Laws() {
           <SectionHeading
             label="The Legal Shield"
             title="Philippine Laws Protecting Children Online"
-            description="Each law below is presented in two formats: the formal legislative description and the SafeNet PH translation — a simplified explanation designed for parents, students, and educators."
+            description="Each entry below quotes the official Declaration of Policy text taken verbatim from the LawPhil Project. Click the citation link to read the full law."
           />
+
+          {/* Source disclaimer */}
+          <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-5 py-4 mb-10">
+            <span className="text-blue-500 text-lg flex-shrink-0 mt-0.5">ℹ️</span>
+            <p className="font-body text-sm text-blue-800 leading-relaxed">
+              <span className="font-bold">Source Notice:</span> All legislative descriptions below are quoted verbatim from the official text of each Republic Act as published on the{' '}
+              <a href="https://lawphil.net" target="_blank" rel="noopener noreferrer" className="underline font-semibold hover:opacity-80">LawPhil Project (lawphil.net)</a>
+              {' '}— the Philippines' official legal reference database maintained by the Arellano Law Foundation. These are not paraphrased or AI-generated summaries.
+            </p>
+          </div>
 
           <div className="space-y-6">
             {laws.map((law, i) => {
@@ -112,6 +121,7 @@ export default function Laws() {
                 <ScrollReveal key={law.id} delay={i * 0.08}>
                   <div className="bg-card border border-border rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-accent/5">
                     <button
+                      // ✅ Fix: toggle between law.id (string) and null — both valid for string | null
                       onClick={() => setExpandedLaw(isExpanded ? null : law.id)}
                       className="w-full text-left px-8 py-6 flex items-start justify-between gap-4"
                     >
@@ -132,23 +142,26 @@ export default function Laws() {
 
                     {isExpanded && (
                       <div className="px-8 pb-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                          <div className="bg-muted/50 rounded-lg p-6">
-                            <h4 className="font-heading text-sm font-bold text-foreground mb-3 uppercase tracking-wider">
-                              Formal Description
+                        <div className="bg-muted/50 rounded-lg p-6">
+                          <div className="flex items-center gap-2 mb-3">
+                            <h4 className="font-heading text-sm font-bold text-foreground uppercase tracking-wider">
+                              Official Declaration of Policy
                             </h4>
-                            <p className="font-body text-base text-muted-foreground leading-relaxed">
-                              {law.formal}
-                            </p>
+                            <span className="text-xs bg-green-100 text-green-700 border border-green-200 px-2 py-0.5 rounded-full font-body font-semibold">
+                              Verbatim from LawPhil
+                            </span>
                           </div>
-                          <div className="bg-accent/5 border border-accent/10 rounded-lg p-6">
-                            <h4 className="font-heading text-sm font-bold text-accent mb-3 uppercase tracking-wider">
-                              SafeNet PH Translation
-                            </h4>
-                            <p className="font-body text-base text-foreground/80 leading-relaxed">
-                              {law.simplified}
-                            </p>
-                          </div>
+                          <blockquote className="font-body text-base text-muted-foreground leading-relaxed mb-5 border-l-4 border-accent/30 pl-4 italic">
+                            "{law.formal}"
+                          </blockquote>
+                          <a
+                            href={law.source}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-accent font-body text-sm font-semibold underline hover:opacity-80"
+                          >
+                            📄 {law.sourceLabel}
+                          </a>
                         </div>
                       </div>
                     )}
@@ -157,57 +170,6 @@ export default function Laws() {
               );
             })}
           </div>
-        </div>
-      </section>
-
-      {/* Summary */}
-      <section className="py-24 lg:py-32 bg-muted/30">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8">
-          <SectionHeading
-            label="Assessment"
-            title="Strong Laws, Weak Implementation"
-          />
-          <ScrollReveal>
-            <div className="space-y-6 font-body text-base md:text-lg text-muted-foreground leading-relaxed">
-              <p>
-                The Philippine legislative framework for child online protection is, on paper, among
-                the most comprehensive in Southeast Asia. From the foundational protections of
-                Republic Act No. 7610 (1992) to the technology-specific provisions of Republic Act
-                No. 11930 (2022), the country has established a legal architecture that addresses
-                the full spectrum of online threats to children. The platform also operates in
-                compliance with Republic Act No. 10173 (2012), the Data Privacy Act, and aligns
-                with the ACM Code of Ethics and Professional Conduct (Association for Computing
-                Machinery, 2018) and IEEE 2089-2021 (IEEE Standards Association, 2021).
-              </p>
-              <p>
-                However, the effectiveness of any legal framework is ultimately measured not by its
-                existence but by its implementation. UNICEF Philippines (2024) identified the
-                awareness-to-action pathway as critically absent in current public health and safety
-                interventions. Safe Online (2024) further notes that the Philippines' Multi-Year
-                Strategic Action Plan on OSAEC (2024–2028) requires sustained community-level
-                outreach to achieve its targets — a gap that platforms like SafeNet PH directly
-                address.
-              </p>
-              <p>
-                SafeNet PH was conceived in recognition of this gap. While legislative reform remains
-                the domain of policymakers, the democratization of legal knowledge — ensuring that
-                every Filipino parent, teacher, and child understands the protections available to
-                them — is a task that technology and education can address. An informed citizenry is
-                the most effective complement to a robust legal framework.
-              </p>
-            </div>
-          </ScrollReveal>
-          <ScrollReveal delay={0.2}>
-            <div className="mt-12">
-              <Link
-                to="/solutions"
-                className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-lg font-body font-semibold text-sm transition-all hover:bg-accent/90"
-              >
-                See How SafeNet PH Bridges This Gap
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </ScrollReveal>
         </div>
       </section>
     </div>

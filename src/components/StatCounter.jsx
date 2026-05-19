@@ -1,7 +1,12 @@
+
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 
-export default function StatCounter({ value, suffix = '', label, citation, duration = 1.5 }) {
+/**
+ * @param {{ value: number | string, suffix?: string, label: string, citation?:  string, href?: string, duration?: number }} props
+ */
+
+export default function StatCounter({ value, suffix = '', label, citation, href, duration = 1.5 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const [count, setCount] = useState(0);
@@ -38,9 +43,20 @@ export default function StatCounter({ value, suffix = '', label, citation, durat
         {label}
       </p>
       {citation && (
-        <p className="font-body text-[10px] text-muted-foreground/60 italic mt-auto">
-          {citation}
-        </p>
+        href ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-body text-[10px] text-accent/70 italic mt-auto underline hover:text-accent transition-colors"
+          >
+            {citation} ↗
+          </a>
+        ) : (
+          <p className="font-body text-[10px] text-muted-foreground/60 italic mt-auto">
+            {citation}
+          </p>
+        )
       )}
     </motion.div>
   );

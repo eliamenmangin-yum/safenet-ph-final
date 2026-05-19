@@ -82,10 +82,10 @@ const QUICK_ACTIONS = {
 };
 
 const EMERGENCY_CONTACTS = [
-  { name: 'PNP Anti-Cybercrime Group', number: '#777', type: 'call' },
+  { name: 'PNP Anti-Cybercrime Group', number: '#0998 - 598 - 8102', type: 'call' },
   { name: 'MAKABATA Helpline', number: '1383', type: 'call' },
   { name: 'PICACC', number: 'https://picacc.gov.ph', type: 'web' },
-  { name: 'DSWD Hotline', number: '931-8101', type: 'call' },
+  { name: 'DSWD Hotline', number: '0931 - 755 - 3702', type: 'call' },
 ];
 
 // ─── Greetings (bilingual, richer — from old bot) ─────────────────────────────
@@ -129,7 +129,7 @@ async function callAI(messages, mode, lang, sessionId) {
 }
 
 // ─── Highlight emergency numbers in bot replies ───────────────────────────────
-const EMERGENCY_NUMBER_RE = /(#777|1383|8888|931-8101|\(02\)523-8231|911)/g;
+const EMERGENCY_NUMBER_RE = /(#0998 - 598 - 8102|1383|0931 - 755 - 3702|\(02\)523-8231|911)/g;
 
 function highlightNumbers(html) {
   return html.replace(

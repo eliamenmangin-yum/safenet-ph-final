@@ -95,24 +95,58 @@ export default function About() {
                     address.
                   </p>
                   <p>
-                    According to the International Justice Mission (IJM), one out of every 100
-                    children in the Philippines was a victim of online sexual exploitation in 2022
-                    alone, with the majority of cases involving live-streamed abuse produced for
-                    foreign demand (International Justice Mission, 2023). A landmark study by
-                    UNICEF, ECPAT International, and Interpol (2022) found that approximately 20%
-                    of internet-using Filipino children aged 12–17 had experienced online child
-                    sexual abuse and exploitation between 2020 and 2021 — an estimated two million
-                    child victims.
+                   According to the International Justice Mission (IJM), one out of every 100
+                   children in the Philippines was a victim of online sexual exploitation in 2022
+                   alone, with the majority of cases involving live-streamed abuse produced for
+                   foreign demand.{' '}
+                   <a
+                     href="https://www.ijm.org/news/1-in-100-children-sexually-exploited-livestreams-new-abuse-images-videos-philippines-last-year-driven-by-foreign-demand"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="text-accent underline hover:opacity-80 text-sm"
+                   >
+                     International Justice Mission, 2023
+                   </a>
+                   . A landmark study by UNICEF, ECPAT International, and Interpol (2022) found
+                   that approximately 20% of internet-using Filipino children aged 12–17 had
+                   experienced online child sexual abuse and exploitation between 2020 and 2021 —
+                   an estimated two million child victims.{' '}
+                   <a
+                     href="https://www.unicef.org/philippines/reports/disrupting-harm-philippines"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="text-accent underline hover:opacity-80 text-sm"
+                   >
+                     UNICEF, ECPAT & Interpol, 2022
+                   </a>
+                   .
                   </p>
                   <p>
-                    The COVID-19 pandemic further amplified these risks. Justice and Care (2023)
-                    reported that the Department of Justice of the Philippines recorded a threefold
-                    increase in OSAEC cases following pandemic quarantine measures, as families
-                    turned to the internet for education and livelihood while children were left
-                    with greater unsupervised online access. UNICEF Philippines (2021) documented
-                    that children and young people are increasingly among the most active users of
-                    digital platforms, creating a critical mismatch between platform design and
-                    the safety requirements of minors.
+                   The COVID-19 pandemic further amplified these risks. Justice and Care (2023)
+                   reported that the Department of Justice of the Philippines recorded a threefold
+                   increase in OSAEC cases following pandemic quarantine measures, as families
+                   turned to the internet for education and livelihood while children were left
+                   with greater unsupervised online access.{' '}
+                   <a
+                     href="https://justiceandcare.org/app/uploads/2023/10/Justice-and-Care-Issue-Brief_Online-Sexual-Exploitation-of-Children_Oct-2023.pdf"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="text-accent underline hover:opacity-80 text-sm"
+                   >
+                     Justice and Care, 2023
+                   </a>
+                   . UNICEF Philippines (2021) documented that children and young people are
+                   increasingly among the most active users of digital platforms, creating a
+                   critical mismatch between platform design and the safety requirements of minors.{' '}
+                   <a
+                     href="https://www.unicef.org/philippines/media/2706/file/UNIPH-2021-PhilippinesKidsOnline-FullReport.pdf"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="text-accent underline hover:opacity-80 text-sm"
+                   >
+                     UNICEF Philippines, 2021
+                   </a>
+                   .
                   </p>
                 </div>
               </ScrollReveal>
@@ -181,17 +215,44 @@ export default function About() {
                 poll conducted by UNICEF Philippines (2024) found that only 13.52% of young
                 respondents were familiar with the MAKABATA Helpline 1383 — the official government
                 channel for reporting child rights violations online — despite the helpline having
-                been launched the previous year. Similarly, the Department of Information and
-                Communications Technology conducted cybersecurity orientations that reached only
-                approximately 500 school participants in the first quarter of 2024, a fraction of
-                the millions of Filipino children who access the internet daily (OpenGov Asia, 2024).
+                been launched the previous year.{' '}
+                <a
+                  href="https://www.unicef.org/philippines/stories/young-people-philippines-speak-out-online-safety"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent underline hover:opacity-80 text-sm"
+                >
+                  UNICEF Philippines, 2024
+                </a>
+                . Similarly, the Department of Information and Communications Technology conducted
+                cybersecurity orientations that reached only approximately 500 school participants
+                in the first quarter of 2024, a fraction of the millions of Filipino children who
+                access the internet daily.{' '}
+                <a
+                  href="https://archive.opengovasia.com/2024/03/30/ensuring-digital-safety-for-children-in-the-philippines/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent underline hover:opacity-80 text-sm"
+                >
+                  OpenGov Asia, 2024
+                </a>
+                .
               </p>
               <p>
                 This triad of uninformed parents, uneducated children, and underprepared educators
                 creates an ecosystem in which predators can operate with minimal resistance. The
                 absence of a unified, accessible, and research-driven digital literacy platform —
                 one that speaks to the Philippine context in language familiar to Filipino families —
-                represents the critical gap that SafeNet PH seeks to address (UNICEF Philippines, 2021).
+                represents the critical gap that SafeNet PH seeks to address.{' '}
+                <a
+                  href="https://www.unicef.org/philippines/media/2706/file/UNIPH-2021-PhilippinesKidsOnline-FullReport.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent underline hover:opacity-80 text-sm"
+                >
+                  UNICEF Philippines, 2021
+                </a>
+                .
               </p>
             </div>
           </ScrollReveal>
