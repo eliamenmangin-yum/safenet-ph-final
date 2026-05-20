@@ -29,8 +29,8 @@ const stats = [
     href: 'https://www.unicef.org/philippines/stories/young-people-philippines-speak-out-online-safety',
   },
   {
-    value: 3,
-    suffix: 'x',
+    value: 264,
+    suffix: '%',
     label: 'Increase in OSAEC cases recorded during the COVID-19 pandemic',
     citation: 'Justice and Care, 2023',
     href: 'https://justiceandcare.org/app/uploads/2023/10/Justice-and-Care-Issue-Brief_Online-Sexual-Exploitation-of-Children_Oct-2023.pdf',
