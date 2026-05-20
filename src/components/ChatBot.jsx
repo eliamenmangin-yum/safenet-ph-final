@@ -96,6 +96,7 @@ const EMERGENCY_CONTACTS = [
   { name: 'PNP Anti-Cybercrime Group', number: '(02) 723-0401 local 5313', type: 'call' },
   { name: 'National Bureau of Investigation (NBI)', number: '(02) 8524-3378', type: 'call' },
   { name: 'Department of Justice (DOJ)', number: '(02) 8527-2566', type: 'call' },
+  { name: 'DSWD (Child Protection)', number: '0931-755-3702', type: 'call' },
 ];
 
 const PNP_REPORT_URL = 'https://acg.pnp.gov.ph';
@@ -118,9 +119,9 @@ const GREETINGS = {
     BIS: "Maayong adlaw, Magtutudlo! Ako si <strong>SafeNet PH Bot</strong>.<br/><br/>Makatabang ko sa pagplano sa imong leksyon bahin sa online safety. Unsa imong kinahanglan karon?",
   },
   EMERGENCY: {
-    EN:  "⚠️ <strong>Emergency Mode.</strong><br/><br/>If you are in immediate physical danger, call <strong>911</strong> first.<br/><br/><strong>Emergency Contacts:</strong><br/>PNP Anti-Cybercrime Group: <strong>(02) 723-0401 local 5313</strong><br/>NBI: <strong>(02) 8524-3378</strong><br/>DOJ: <strong>(02) 8527-2566</strong><br/><br/>You can also report online at the PNP-ACG website.<br/><br/>Describe your situation below — you are not alone.",
-    FIL: "⚠️ <strong>Emergency Mode.</strong><br/><br/>Kung nasa agarang panganib ka, tumawag sa <strong>911</strong>.<br/><br/><strong>Mga Emergency Contact:</strong><br/>PNP Anti-Cybercrime Group: <strong>(02) 723-0401 local 5313</strong><br/>NBI: <strong>(02) 8524-3378</strong><br/>DOJ: <strong>(02) 8527-2566</strong><br/><br/>Maari rin kayong mag-report online sa PNP Anti-Cybercrime Group website.<br/><br/>Sabihin mo sa akin ang iyong sitwasyon. Nandito lang ako.",
-    BIS: "⚠️ <strong>Emergency Mode.</strong><br/><br/>Kung naa ka sa dagkong katalagman, tawag dayon sa <strong>911</strong>.<br/><br/><strong>Mga Emergency Contact:</strong><br/>PNP Anti-Cybercrime Group: <strong>(02) 723-0401 local 5313</strong><br/>NBI: <strong>(02) 8524-3378</strong><br/>DOJ: <strong>(02) 8527-2566</strong><br/><br/>Pwede ra usab mo mag-report online sa PNP Anti-Cybercrime Group website.<br/><br/>Isulti sa ako imong sitwasyon. Ania ra ko para nimo.",
+    EN:  "⚠️ <strong>Emergency Mode.</strong><br/><br/>If you are in immediate physical danger, call <strong>911</strong> first.<br/><br/><strong>Emergency Contacts:</strong><br/>PNP Anti-Cybercrime Group: <strong>(02) 723-0401 local 5313</strong><br/>NBI: <strong>(02) 8524-3378</strong><br/>DOJ: <strong>(02) 8527-2566</strong><br/>DSWD (Child Protection): <strong>0931-755-3702</strong><br/><br/>You can also report online at the PNP-ACG website.<br/><br/>Describe your situation below — you are not alone.",
+    FIL: "⚠️ <strong>Emergency Mode.</strong><br/><br/>Kung nasa agarang panganib ka, tumawag sa <strong>911</strong>.<br/><br/><strong>Mga Emergency Contact:</strong><br/>PNP Anti-Cybercrime Group: <strong>(02) 723-0401 local 5313</strong><br/>NBI: <strong>(02) 8524-3378</strong><br/>DOJ: <strong>(02) 8527-2566</strong><br/>DSWD (Child Protection): <strong>0931-755-3702</strong><br/><br/>Maari rin kayong mag-report online sa PNP Anti-Cybercrime Group website.<br/><br/>Sabihin mo sa akin ang iyong sitwasyon. Nandito lang ako.",
+    BIS: "⚠️ <strong>Emergency Mode.</strong><br/><br/>Kung naa ka sa dagkong katalagman, tawag dayon sa <strong>911</strong>.<br/><br/><strong>Mga Emergency Contact:</strong><br/>PNP Anti-Cybercrime Group: <strong>(02) 723-0401 local 5313</strong><br/>NBI: <strong>(02) 8524-3378</strong><br/>DOJ: <strong>(02) 8527-2566</strong><br/>DSWD (Child Protection): <strong>0931-755-3702</strong><br/><br/>Pwede ra usab mo mag-report online sa PNP Anti-Cybercrime Group website.<br/><br/>Isulti sa ako imong sitwasyon. Ania ra ko para nimo.",
   },
 };
 
